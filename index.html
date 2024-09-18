@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@8.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+  </head>
+  <body></body>
+  <script>
+    var jsPsych = initJsPsych();
+    const subject_id = jsPsych.randomization.randomID(10);
+    const filename = `${subject_id}.csv`;
+    var timeline = [];
+    var instructions = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "In this task you'll do stuff!"
+    };
+    timeline.push(instructions);
+    
+
+    var image_trial = {
+        type:jsPsychImageKeyboardResponse,
+        stimulus: "img/bunny.jpg",
+        choices: ["y", "n"],
+        prompt: "Press y if it is singular, n if plural"
+    };
+
+    // fixation trials
+    var fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "+",
+        choice: "NO_KEYS",
+        trial_duration: 500
+    };
+
+    var image_trial_timeVar = {
+        type:jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('image'),
+        choices: ["p", "s"],
+        prompt: "Press s if it is singular, p if plural"
+    };
+
+    var trial_procedure = {
+        timeline: [fixation, image_trial_timeVar],
+        timeline_variables: [
+            {image: "img/bunny.jpg", name: "bunny"},
+            {image: "img/bunnies.jpg", name: "bunnies"}
+        ]
+    }
+
+    var save_data = {
+                type: jsPsychPipe,
+                action: "save",
+                experiment_id: "yFAWljrSaouG",
+                filename: filename,
+                data_string: ()=>jsPsych.data.get().csv()
+              };
+    
+    timeline.push(instructions);
+    timeline.push(image_trial)
+    timeline.push(trial_procedure)
+    timeline.push(save_data)
+
+
+
+    jsPsych.run(timeline)
+
+  </script>
+</html>
